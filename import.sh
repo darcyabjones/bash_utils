@@ -5,9 +5,7 @@
 
 __IMPORT_IMPORT_DIRNAME="$(dirname ${BASH_SOURCE[0]})"
 __IMPORT_IMPORT_SUBCOMMAND="${1}"
-# echo subcommand "${__IMPORT_IMPORT_SUBCOMMAND}"
 __IMPORT_IMPORT_FILENAME="${2}"
-#echo "filename ${__IMPORT_IMPORT_FILENAME}"
 
 source "${__IMPORT_IMPORT_DIRNAME}/preserve_set.sh" save "${__IMPORT_IMPORT_FILENAME}"
 
@@ -38,7 +36,7 @@ then
             __IMPORT_SAVE_ENV["${__IMPORT_IMPORT_FILENAME}.${var}"]=$(declare -p "${var}")
         elif declare -f -F "${var}" 2>&1 > /dev/null
         then
-            __IMPORT_SAVE_ENV["${__IMPORT_IMPORT_FILENAME}.${var}"]=$(declare -f -F "${var}")
+            __IMPORT_SAVE_ENV["${__IMPORT_IMPORT_FILENAME}.${var}"]=$(declare -f "${var}")
         fi
     done
 elif [ "${__IMPORT_IMPORT_SUBCOMMAND:-}" = "restore" ]
@@ -77,12 +75,6 @@ then
             fi
         done
     fi
-
-    #echo import "${BASH_SOURCE[@]}"
-    echo import ${__IMPORT_IMPORT_IMPORTS[@]}
-    echo import ${__IMPORT_IMPORT_ALL[@]}
-
-
 
     if [ "${#__IMPORT_IMPORT_IMPORTS[@]}" -gt 0 ] && [ "${#__IMPORT_IMPORT_ALL[@]}" -gt 0 ]
     then

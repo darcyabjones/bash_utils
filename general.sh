@@ -26,9 +26,6 @@ isin() {
     return 1
 }
 
-
-echo "general ${@}"
-
 source "${__IMPORT_GENERAL_DIRNAME}/import.sh" restore "${BASH_SOURCE[0]}" "${@:-}" -- "${__IMPORT_GENERAL_ALL[@]:-}"
 unset __IMPORT_GENERAL_DIRNAME
 unset __IMPORT_GENERAL_ALL
