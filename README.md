@@ -39,10 +39,12 @@ In this case, it will unset `fn2` and `VAR2`.
 It will also restore the values of any variables or functions that you passed to the `save` subcommand earlier.
 Note that if you change something that isn't specified in the `save` subcommand, it won't be restored.
 
-If you leave the first list empty, then nothing will be removed and you'll keep everything you've defined.
+If you leave the first list empty, then it'll raise an error.
+This is because if there are no arguments given on a source command, the source inherits `$@` from the parent process.
+If you want to import everything defined, you can use the special character `@` so that nothing will be removed.
 
 ```
-source ./import.sh restore "${0}" -- fn1 fn2 VAR1 VAR2
+source ./import.sh restore "${0}" @ -- fn1 fn2 VAR1 VAR2
 # is equivalent to
 source ./import.sh restore "${0}" fn1 fn2 VAR1 VAR2 -- fn1 fn2 VAR1 VAR2
 ```
@@ -86,8 +88,20 @@ fi
 # echo_stderr won't be available here
 ```
 
+Since these libraries are created using the `import.sh` system, you can also "import all" with `@`
+```
+source ./general.sh @
+
+if isin 1  1 2 3 4
+then
+    echo "1" was in "1 2 3 4"
+fi
+
+echo_stderr "I'll print this to stderr"
+```
+
 
 ## Installation
 
 I expect that you'll probably use this repo as a submodule in your own repo.
-Then you can just find paths to these scripts from your own scriptnames (e.g. `source $(dirname $0)/bash_utils/general.sh`).
+Then you can just find paths to these scripts from your own scriptnames (e.g. `source $(dirname $0)/bash_utils/general.sh @`).

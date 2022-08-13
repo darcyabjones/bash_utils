@@ -3,9 +3,11 @@
 # Note that we use these crazy variable names so that it's extremely unlikely to
 # clash with anything else.
 
-__IMPORT_IMPORT_DIRNAME="$(dirname $0)"
+__IMPORT_IMPORT_DIRNAME="$(dirname ${BASH_SOURCE[0]})"
 __IMPORT_IMPORT_SUBCOMMAND="${1}"
+# echo subcommand "${__IMPORT_IMPORT_SUBCOMMAND}"
 __IMPORT_IMPORT_FILENAME="${2}"
+#echo "filename ${__IMPORT_IMPORT_FILENAME}"
 
 source "${__IMPORT_IMPORT_DIRNAME}/preserve_set.sh" save "${__IMPORT_IMPORT_FILENAME}"
 
@@ -29,7 +31,7 @@ __isin() {
 if [ "${__IMPORT_IMPORT_SUBCOMMAND:-}" = "save" ]
 then
     declare -A __IMPORT_SAVE_ENV
-    for var in "${@}"
+    for var in ${@}
     do
         if [ ! -z "${!var:-}" ]
         then
@@ -58,12 +60,29 @@ then
         shift
     done
 
-    # We need to set this so that it's easier to restore things
-    # that aren't in here later.
-    if [ "${#__IMPORT_IMPORT_IMPORTS[@]}" -eq 0 ]
+    if [ "${__IMPORT_IMPORT_IMPORTS[0]}" = "@" ]
     then
         __IMPORT_IMPORT_IMPORTS=( "${__IMPORT_IMPORT_ALL[@]}" )
+    elif [ "${#__IMPORT_IMPORT_IMPORTS[@]}" -eq 0 ]
+    then
+        echo "ERROR: didn't get any thing to import, please use @ to import all"  1&2
+        exit 1
+    else
+        for var in "${__IMPORT_IMPORT_IMPORTS[@]}"
+        do
+            if ! __isin "${var}" "${__IMPORT_IMPORT_ALL[@]}"
+            then
+                echo "ERROR: import ${var} is not in ${__IMPORT_IMPORT_ALL[@]}"
+                exit 1
+            fi
+        done
     fi
+
+    #echo import "${BASH_SOURCE[@]}"
+    echo import ${__IMPORT_IMPORT_IMPORTS[@]}
+    echo import ${__IMPORT_IMPORT_ALL[@]}
+
+
 
     if [ "${#__IMPORT_IMPORT_IMPORTS[@]}" -gt 0 ] && [ "${#__IMPORT_IMPORT_ALL[@]}" -gt 0 ]
     then
@@ -86,13 +105,14 @@ then
     # Restore previous arguments if we're not keeping them all
     if declare -A -p __IMPORT_SAVE_ENV > /dev/null 2>&1
     then
-        for var in "${!__IMPORT_SAVE_ENV[@]}"
+        for var in ${!__IMPORT_SAVE_ENV[@]}
         do
             if [[ "${var}" != "${__IMPORT_IMPORT_FILENAME}"* ]]
             then
                 # Came from another file
                 continue
             elif __isin "${var#${__IMPORT_IMPORT_FILENAME}}" "${__IMPORT_IMPORT_IMPORTS[@]}"
+            then
                 # We want to keep it
                 continue
             fi
@@ -100,7 +120,7 @@ then
             unset __IMPORT_SAVE_ENV[${var}]
         done
 
-        if [ "${#__IMPORT_SAVE_ENV[@]}" -eq 0 ]
+        if [ "z${__IMPORT_SAVE_ENV[@]:-}" = "z" ]
         then
             unset __IMPORT_SAVE_ENV
         fi

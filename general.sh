@@ -3,10 +3,9 @@
 # Note that we use these crazy variable names so that it's extremely unlikely to
 # clash with anything else.
 
-__IMPORT_GENERAL_DIRNAME=$(dirname "$0")
+__IMPORT_GENERAL_DIRNAME=$(dirname "${BASH_SOURCE[0]}")
 __IMPORT_GENERAL_ALL=( echo_stderr isin )
-
-source "${__IMPORT_GENERAL_DIRNAME}/import.sh" save "${0}" "${__IMPORT_GENERAL_ALL[@]:-}"
+source "${__IMPORT_GENERAL_DIRNAME}/import.sh" save "${BASH_SOURCE[0]}" "${__IMPORT_GENERAL_ALL[@]:-}"
 
 set +x
 set -euo pipefail
@@ -28,6 +27,8 @@ isin() {
 }
 
 
-source "${__IMPORT_GENERAL_DIRNAME}/import.sh" restore "${0}" "${@:-}" -- "${__IMPORT_GENERAL_ALL[@]:-}"
+echo "general ${@}"
+
+source "${__IMPORT_GENERAL_DIRNAME}/import.sh" restore "${BASH_SOURCE[0]}" "${@:-}" -- "${__IMPORT_GENERAL_ALL[@]:-}"
 unset __IMPORT_GENERAL_DIRNAME
 unset __IMPORT_GENERAL_ALL

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-__BUTILS_DIRNAME=$(dirname "$0")
+__BUTILS_DIRNAME=$(dirname "${BASH_SOURCE[0]}")
 __BUTILS_ALL=( check_positional has_equals split_at_equals check_no_default_param check_param )
-source "${__BUTILS_DIRNAME}/import.sh" save "${0}" "${__BUTILS_ALL[@]}"
+source "${__BUTILS_DIRNAME}/import.sh" save "${BASH_SOURCE[0]}" "${__BUTILS_ALL[@]}"
 
 set +x
 set -euo pipefail
@@ -47,6 +47,6 @@ check_param() {
 }
 
 
-source "${__BUTILS_DIRNAME}/import.sh" restore "${0}" "${@:-}" -- "${__BUTILS_ALL[@]:-}"
+source "${__BUTILS_DIRNAME}/import.sh" restore "${BASH_SOURCE[0]}" "${@:-}" -- "${__BUTILS_ALL[@]:-}"
 unset __BUTILS_ALL
 unset __BUTILS_DIRNAME
